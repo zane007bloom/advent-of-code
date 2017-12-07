@@ -11,6 +11,16 @@ fun main(args: Array<String>) {
         lines.add(list)
     }
     val tree = TreeBuilder().build(lines)
-    print(tree)
+    println(tree)
+
+    println("=================================")
+
+    val sums: MutableList<Int> = mutableListOf()
+    for (child in tree?.children!!) {
+        sums.add(child!!.getTotal())
+    }
+    val diff = sums.max()!! - sums.min()!!
+
+    print(tree.getUnbalancedNode().weight + diff)
 
 }
