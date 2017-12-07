@@ -18,7 +18,7 @@ class TreeBuilder {
             for (i in 2 until line.size) {
                 val childName = line[i]
                 if (!programs.containsKey(childName)) {
-                    programs.put(childName, Program(childName, 0, null, -1))
+                    programs.put(childName, Program(childName, 0, -1, null))
                 }
                 children.add(programs[childName])
                 parents.put(childName, name)
@@ -32,7 +32,7 @@ class TreeBuilder {
                 }
 
             } else {
-                programs.put(name, Program(name, weight, children, -1))
+                programs.put(name, Program(name, weight, -1, children))
             }
 
         }
