@@ -1,6 +1,6 @@
 package day7
 
-data class Program(val name: String, var weight: Int, var children: MutableList<Program?>?, var totalWeight: Int) {
+data class Program(val name: String, var weight: Int, var totalWeight: Int, var children: MutableList<Program?>?) {
 
     fun getTotal(): Int {
         if (totalWeight != -1) {
@@ -17,24 +17,42 @@ data class Program(val name: String, var weight: Int, var children: MutableList<
         return sum
     }
 
-    fun getUnbalancedNode(): Program {
+    fun getUnbalancedWeight(diff: Int): Int {
         if (children == null || children!!.isEmpty()) {
-            return this
+            return this.getTotal() + diff
         }
-        var least = children!![0]?.totalWeight
-        var leastChild = children!![0]
-        val totals: MutableList<Int> = mutableListOf()
+
+        val counts: MutableMap<Int, Int> = mutableMapOf()
         for (child in children!!) {
-            if (child!!.getTotal() < least!!) {
-                least = child.getTotal()
-                leastChild = child
+            if (!counts.containsKey(child?.getTotal())) {
+                counts.put(child?.getTotal()!!, 0)
             }
-            totals.add(child.getTotal())
+            counts[child!!.getTotal()] = counts[child.getTotal()]!! + 1
         }
-        val diff = totals.max()!! - totals.min()!!
-        if (diff == 0) {
-            return this
+
+        if (counts.size == 1) {
+            return this.weight + diff
         }
-        return leastChild!!
+
+        var oddBalance = 0
+        var normalBalance = 0
+        for (entry in counts) {
+            if (entry.value == 1) {
+                oddBalance = entry.key
+            } else {
+                normalBalance = entry.key
+            }
+        }
+
+        val diff = normalBalance - oddBalance
+
+        var oddChild: Program? = null
+        for (child in children!!) {
+            if (child!!.getTotal() == oddBalance) {
+                oddChild = child
+            }
+        }
+
+        return oddChild!!.getUnbalancedWeight(diff)
     }
 }

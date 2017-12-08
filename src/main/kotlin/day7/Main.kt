@@ -3,7 +3,7 @@ package day7
 import java.io.File
 
 fun main(args: Array<String>) {
-    val fileLines = File("/home/zane/IdeaProjects/advent-of-code/src/main/kotlin/input.txt").readLines()
+    val fileLines = File("C:/Development/advent-of-code/src/main/kotlin/input.txt").readLines()
     val lines: MutableList<MutableList<String>> = mutableListOf()
     for (line in fileLines) {
         val list = line.split(" ", "(", ")", "->", ",").toMutableList()
@@ -14,13 +14,7 @@ fun main(args: Array<String>) {
     println(tree)
 
     println("=================================")
-
-    val sums: MutableList<Int> = mutableListOf()
-    for (child in tree?.children!!) {
-        sums.add(child!!.getTotal())
-    }
-    val diff = sums.max()!! - sums.min()!!
-
-    print(tree.getUnbalancedNode().weight + diff)
+    tree!!.getTotal()
+    print(tree.getUnbalancedWeight(-1))
 
 }
