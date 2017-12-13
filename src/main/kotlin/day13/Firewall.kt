@@ -19,6 +19,53 @@ class Firewall {
         return calculateSeverity(layersCaughtIn, layers)
     }
 
+    fun calulateDelay(layers: MutableMap<Int, Int>): Int {
+        var layersCaughtIn = mutableMapOf<Int, MutableList<Int>>()
+        val layerPositions = mutableMapOf<Int, Int>()
+        val layerDirections = mutableMapOf<Int, Direction>()
+        var picoSecond = 0
+        val currentPositions = mutableMapOf<Int, Int>()
+        val numberOfLayers = layers.keys.max()
+
+        for (layer in layers.keys) {
+            layerPositions.put(layer, 0)
+            layerDirections.put(layer, Direction.DOWN)
+        }
+
+        while (true) {
+            updateCurrentPositions(picoSecond, currentPositions, layersCaughtIn)
+
+            for (currentPosition in currentPositions) {
+                if (layerPositions.containsKey(currentPosition.value) && layerPositions.getValue(currentPosition.value) == 0) {
+                    layersCaughtIn.getValue(currentPosition.key).add(currentPosition.value)
+                }
+            }
+
+            updateLayerPositions(layerPositions, layerDirections, layers)
+            val toRemove = mutableListOf<Int>()
+            for (currentPosition in currentPositions) {
+                if (currentPosition.value > numberOfLayers!!) {
+                    if (layersCaughtIn.getValue(currentPosition.key).isEmpty()) {
+                        return currentPosition.key
+                    } else {
+                        toRemove.add(currentPosition.key)
+                    }
+                }
+            }
+            currentPositions.keys.removeAll(toRemove)
+            picoSecond++
+        }
+        return -1
+    }
+
+    private fun updateCurrentPositions(picoSecond: Int, currentPositions: MutableMap<Int, Int>, layersCaughtIn: MutableMap<Int, MutableList<Int>>) {
+        for (key in currentPositions.keys) {
+            currentPositions.put(key, currentPositions.getValue(key) + 1)
+        }
+        currentPositions.put(picoSecond, 0)
+        layersCaughtIn.put(picoSecond, mutableListOf())
+    }
+
     private fun calculateSeverity(layersCaughtIn: MutableList<Int>, layers: MutableMap<Int, Int>): Int {
         var sum = 0
         for (layerCaughtIn in layersCaughtIn) {

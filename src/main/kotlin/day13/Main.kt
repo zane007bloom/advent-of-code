@@ -10,5 +10,5 @@ fun main(args: Array<String>) {
         val depth = line.split(": ")[1].toInt()
         layers.put(layer, depth)
     }
-    print(Firewall().calculateSeverity(layers))
+    print(Firewall().calulateDelay(layers))
 }
