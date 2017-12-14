@@ -1,6 +1,7 @@
 package day14
 
 import day10.KnotTyingHashEncoder
+import day3.Point
 
 class Disk {
 
@@ -8,19 +9,42 @@ class Disk {
         var sum = 0
         for (i in 0..127) {
             val binary = encodeToBinary(input + "-$i")
-            println(binary.map { if (it == '1') '#' else "." })
             sum += binary.count { it == '1' }
         }
         return sum
     }
 
     fun calculateRegions(input: String): Int {
-        var sum = 0
+        var currentRegion = 1
         val disk = createDisk(input)
+        val toProcess = mutableListOf<Point>()
+        val regions = mutableMapOf<Int, MutableList<Point>>()
+        regions.put(currentRegion, mutableListOf())
         for (i in 0..127) {
-
+            for (j in 0..127) {
+                toProcess.add(Point(j, i))
+            }
         }
-        return sum
+
+        while (toProcess.isNotEmpty()) {
+            val point = toProcess.removeAt(0)
+            if (disk[point.y][point.x] == '1') {
+                processPoint(point, disk, regions, currentRegion, toProcess)
+                regions.put(++currentRegion, mutableListOf())
+            }
+        }
+        return regions.keys.max()!! - 1
+    }
+
+    private fun processPoint(point: Point, disk: List<String>, regions: MutableMap<Int, MutableList<Point>>, currentRegion: Int, toProcess: MutableList<Point>) {
+        regions.getValue(currentRegion).add(point)
+        val filledNeighbours = point.filledNeighbours(disk)
+        for (filledNeighbour in filledNeighbours) {
+            if (toProcess.contains(filledNeighbour)) {
+                toProcess.remove(filledNeighbour)
+                processPoint(filledNeighbour, disk, regions, currentRegion, toProcess)
+            }
+        }
     }
 
     private fun createDisk(input: String): List<String> {
