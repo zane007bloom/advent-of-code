@@ -19,6 +19,10 @@ class MutableCircularList<E> : ArrayList<E>(), MutableList<E> {
         return subList
     }
 
+    fun addAfter(index: Int, element: E) {
+        super.add(calculateIndex(index) + 1, element)
+    }
+
     fun replaceAll(startIndex: Int, replacement: Collection<E>) {
         for (i in 0 until replacement.size) {
             this[calculateIndex(i + startIndex)] = replacement.elementAt(i)
